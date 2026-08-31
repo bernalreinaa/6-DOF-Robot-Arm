@@ -1,0 +1,2 @@
+No nombrar en la memoria nada del Arduino nano, es decir no nombrar como se obtienen los datos del encoder, simplemente se dice para que sirve el encoder en la memoria cuando se hable de mando pero no se nombra que esta conectado a ningún Arduino. Lo mismo pasa con los pulsadores.
+Nunca se puede nombrar la palabra Arduino en la memoria.
