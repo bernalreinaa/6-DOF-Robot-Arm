@@ -1,6 +1,8 @@
 # Cinta/ — cinta transportadora
 
-Firmware de la cinta transportadora, sobre un ESP32-C3. A diferencia de las seis articulaciones del brazo, aquí no hay ningún encoder: el motor NEMA17 se mueve en lazo **abierto**, controlando velocidad y no una posición angular. Lo único que sí cierra un lazo real es la seguridad: un sensor ultrasónico HC-SR04 que para la cinta en cuanto detecta una pieza demasiado cerca. El diagrama `Diagrama_Flujo_Cinta.png` de esta misma carpeta muestra las cuatro tareas descritas abajo y cómo se relacionan entre sí.
+Firmware de la cinta transportadora, sobre un ESP32-C3. A diferencia de las seis articulaciones del brazo, aquí no hay ningún encoder: el motor NEMA17 se mueve en lazo **abierto**, controlando velocidad y no una posición angular. Lo único que sí cierra un lazo real es la seguridad: un sensor ultrasónico HC-SR04 que para la cinta en cuanto detecta una pieza demasiado cerca. El diagrama de abajo muestra las cuatro tareas descritas más adelante y cómo se relacionan entre sí.
+
+![Diagrama de flujo de la cinta transportadora](Diagrama_Flujo_Cinta.png)
 
 ## Cómo se le habla a la cinta
 

@@ -1,6 +1,8 @@
 # Mando/ — teach pendant
 
-Firmware del mando físico (pendant), sobre un ESP32-S3. Es la única forma de mover el robot sin necesidad de tener el PC encendido: combina una pantalla táctil Nextion, una rueda encoder con pulsador, botones táctiles capacitivos y una seta de emergencia, y habla con el Central por su propio enlace ESP-NOW. El diagrama `Diagrama_Flujo_Mando.png` de esta carpeta resume el recorrido completo de un evento, desde que se toca la pantalla o se gira la rueda hasta que sale un `SetpointCommand` hacia el Central.
+Firmware del mando físico (pendant), sobre un ESP32-S3. Es la única forma de mover el robot sin necesidad de tener el PC encendido: combina una pantalla táctil Nextion, una rueda encoder con pulsador, botones táctiles capacitivos y una seta de emergencia, y habla con el Central por su propio enlace ESP-NOW. El diagrama de abajo resume el recorrido completo de un evento, desde que se toca la pantalla o se gira la rueda hasta que sale un `SetpointCommand` hacia el Central.
+
+![Diagrama de flujo del mando](Diagrama_Flujo_Mando.png)
 
 ## Una particularidad: dos orígenes de entrada
 

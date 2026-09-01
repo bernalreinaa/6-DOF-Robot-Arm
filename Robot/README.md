@@ -1,6 +1,6 @@
 # Robot/ — Central y las 6 articulaciones
 
-Aquí vive el firmware que mueve físicamente el brazo: el nodo **Central** (ESP32-S3), que hace de puente con el PC, y las seis **Articulaciones** (ESP32-C3), una por cada eje del robot. Los dos diagramas de esta carpeta (`Diagrama_Flujo_Nodo_Central.png` y `Diagrama_Flujo_Articulación.png`) resumen visualmente lo que se explica aquí abajo.
+Aquí vive el firmware que mueve físicamente el brazo: el nodo **Central** (ESP32-S3), que hace de puente con el PC, y las seis **Articulaciones** (ESP32-C3), una por cada eje del robot.
 
 ## Central/
 
@@ -19,6 +19,8 @@ El Central no controla ningún motor directamente: su trabajo es traducir. Por u
 
 `loop()` no usa tareas de FreeRTOS propias: es un único bucle cooperativo que, en cada vuelta, atiende la seta de emergencia, procesa un posible comando del PC, reenvía los setpoints que haya podido pedir el mando, y manda sus dos reportes periódicos (al PC cada 100 ms con los ángulos de las 6 articulaciones y el estado de la cinta, y al mando cada 100 ms solo con los ángulos).
 
+![Diagrama de flujo del nodo Central](Diagrama_Flujo_Nodo_Central.png)
+
 ## Articulacion_1/ … Articulacion_6/
 
 Las seis carpetas contienen exactamente el mismo firmware — mismo `main.cpp`, mismas librerías — con una única diferencia entre ellas: el fichero `lib/JointConfig/JointConfig.h`, que fija los pines, la relación de reductora, las ganancias del PID y los límites de esa articulación en concreto. Documentar una vale para las seis.
@@ -29,6 +31,8 @@ Cada articulación cierra su propio lazo de control de posición de forma local,
 - **`motionTask` (a 1 ms, cuando hay un movimiento en curso)** — toda la lógica vive en `JointMotionController::stepOnce()`: calcula el error respecto al setpoint, aplica un PID clásico con anti-windup, recorta la velocidad resultante con un perfil de tres tramos (`AngleMath::velocityProfile()`, arranque suave / crucero / aproximación), y con esa velocidad genera el pulso PUL/DIR que `StepperDriver` manda al driver **TB6600** del motor **NEMA17**. Antes de arrancar, `beginMove()` calcula el camino más corto que evita la zona prohibida configurada y compensa el backlash mecánico si la articulación acaba de cambiar de sentido.
 
 El resto de librerías dan soporte a estas dos tareas: `JointStorage` guarda los parámetros de ajuste en flash (NVS) para no perderlos al reiniciar, `JointOta` gestiona la actualización de firmware por WiFi con una ventana de 30 s al arrancar, y `JointDisplay` es el envoltorio de la pantalla OLED SH1106.
+
+![Diagrama de flujo de una articulación](Diagrama_Flujo_Articulación.png)
 
 ## Cómo se comunican entre sí
 
