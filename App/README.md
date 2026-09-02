@@ -1,10 +1,22 @@
 # App/ — aplicación de control (PC)
 
-`CINEMATICA_3D_VISUAL_py.py` es la aplicación que corre en el ordenador y desde la que se maneja todo el sistema: calcula la cinemática del brazo, visualiza el robot en 3D, permite moverlo manualmente o por rutinas programadas, y es quien manda los setpoints al Central por puerto serie. Está escrita en Python con PyQt5 para la interfaz y PyVista/VTK para el visor 3D, y es una única clase de unas 6900 líneas — pensada para funcionar tanto en un PC de escritorio como en una pantalla táctil de 800x480 sobre una Raspberry Pi 5, que es justo la variante escalada que contiene este fichero (hay otra versión, `CINEMATICA_3D_VISUAL.py`, con la interfaz a tamaño de escritorio normal; la lógica de ambas debe mantenerse igual a mano).
+`CINEMATICA_3D_VISUAL_py.py` es el punto de entrada de la aplicación que corre en el ordenador y desde la que se maneja todo el sistema: calcula la cinemática del brazo, visualiza el robot en 3D, permite moverlo manualmente o por rutinas programadas, y es quien manda los setpoints al Central por puerto serie. Está escrita en Python con PyQt5 para la interfaz y PyVista/VTK para el visor 3D, pensada para funcionar tanto en un PC de escritorio como en una pantalla táctil de 800x480 sobre una Raspberry Pi 5, que es justo la variante escalada que corresponde a esta carpeta (hay otra versión, `CINEMATICA_3D_VISUAL.py`, con la interfaz a tamaño de escritorio normal; la lógica de ambas debe mantenerse igual a mano).
+
+## Estructura de módulos
+
+La aplicación se reparte en varios ficheros por área temática en vez de vivir en un único fichero monolítico:
+
+- `app_paths.py` — carpeta base y rutas de datos persistentes (rutinas, logs, backups, perfiles de herramienta) y disponibilidad de pyserial.
+- `kinematics.py` — cinemática directa/inversa (MDH), utilidades matriciales y zonas articulares prohibidas; no depende de PyQt.
+- `widgets.py` / `routine_editor_widgets.py` / `dialogs.py` — widgets y diálogos independientes de la ventana principal (gráfica de tuning, editor de bloques con su diagrama de flujo, configuración de nodos/cinta, perfiles de TCP, asistente de calibración).
+- `mixins/` — un fichero por área funcional de la ventana principal (`diagnostics.py`, `log.py`, `routines.py`, `manual_control.py`, `visualization3d.py`, `serial_comm.py`), cada uno con su propia clase *Mixin*.
+- `main_window.py` — la clase `BrazoRobot(QMainWindow, ...)`, que solo contiene el constructor y compone todos los mixins por herencia múltiple.
+- `app.py` — splash de arranque y bucle de Qt.
+- `CINEMATICA_3D_VISUAL_py.py` — punto de entrada fino, se conserva con este nombre para no romper accesos directos existentes.
 
 ## La clase principal: `BrazoRobot`
 
-Es una `QMainWindow` que organiza toda la interfaz en pestañas, cada una centrada en una tarea:
+Es una `QMainWindow` que organiza toda la interfaz en pestañas, cada una centrada en una tarea (repartidas entre los mixins de arriba):
 
 - **Comunicación serie y configuración de nodos** — selección de puerto y conexión con el Central, y el diálogo `NodeConfigDialog` para ajustar en caliente el PID, las velocidades y los límites de cada articulación (con `ResponseGraph` pintando en vivo el setpoint contra la posición real).
 - **Control manual y visualización 3D** — mover cada articulación con sliders o campos numéricos, ver el robot en el visor 3D (construido a partir de los meshes `P1.obj`...`P7.obj`) y trabajar directamente en coordenadas XYZ en vez de ángulos.

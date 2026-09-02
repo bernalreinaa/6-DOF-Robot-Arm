@@ -9,3 +9,9 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Datos generados en tiempo de ejecución por App/ (no son código fuente)
+App/logs/
+App/backups/
+App/rutinas/
+App/herramientas/
